@@ -1,73 +1,122 @@
 import tkinter as tk
+from math import *
 
 calculation = ""
+
+# Color scheme
+BG_COLOR = "#2d2d2d"
+DISPLAY_COLOR = "#1c1c1c"
+BUTTON_COLOR = "#404040"
+OPERATOR_COLOR = "#ff9500"
+SCIENCE_COLOR = "#a6a6a6"
+TEXT_COLOR = "#ffffff"
+SPECIAL_COLOR = "#d4d4d2"
 
 def add_to_calculation(symbol):
     global calculation
     calculation += str(symbol)
-    text_result.delete(1.0,"end") #how to delete delete whole str
-    text_result.insert(1.0, calculation)   #for insert string
+    text_result.delete(1.0, "end")
+    text_result.insert(1.0, calculation)
 
 def evaluate_calculation():
-    ''' python function eval for evaluation the bodmas'''
     global calculation
     try:
+        # Replace mathematical constants and functions
+        calculation = calculation.replace("π", str(pi))
+        calculation = calculation.replace("e", str(e))
+        calculation = calculation.replace("^", "**")
+        
+        # Handle trigonometric functions
+        calculation = calculation.replace("sin", "math.sin")
+        calculation = calculation.replace("cos", "math.cos")
+        calculation = calculation.replace("tan", "math.tan")
+        calculation = calculation.replace("log", "math.log10")
+        calculation = calculation.replace("ln", "math.log")
+        
         result = str(eval(calculation))
-        calculation =""
-        text_result.delete(1.0,"end")
+        calculation = ""
+        text_result.delete(1.0, "end")
         text_result.insert(1.0, result)
     except:
         clear_field()
-        text_result.insert  (1.0, "Error")
+        text_result.insert(1.0, "Error")
 
 def clear_field():
     global calculation
     calculation = ""
     text_result.delete(1.0, "end")
 
-
 root = tk.Tk()
-root.geometry("300x275")
+root.geometry("400x600")
+root.title("Scientific Calculator")
+root.configure(bg=BG_COLOR)
 
-text_result = tk.Text(root, height=2, width=16, font=("Arial",24))
-text_result.grid(columnspan=5)
+# Display Frame
+display_frame = tk.Frame(root, bg=DISPLAY_COLOR, bd=2, relief=tk.FLAT)
+display_frame.pack(padx=10, pady=10, fill=tk.X)
 
-btn_1 = tk.Button(root, text="1",command=lambda:add_to_calculation(1), width = 5, font=("Arial",14))
-btn_1.grid(row=2, column=1)
-btn_2 = tk.Button(root, text="2",command=lambda:add_to_calculation(2), width = 5, font=("Arial",14))
-btn_2.grid(row=2, column=2)
-btn_3 = tk.Button(root, text="3",command=lambda:add_to_calculation(3), width = 5, font=("Arial",14))
-btn_3.grid(row=2, column=3)
-btn_4 = tk.Button(root, text="4",command=lambda:add_to_calculation(4), width = 5, font=("Arial",14))
-btn_4.grid(row=3, column=1)
-btn_5 = tk.Button(root, text="5",command=lambda:add_to_calculation(5), width = 5, font=("Arial",14))
-btn_5.grid(row=3, column=2)
-btn_6 = tk.Button(root, text="6",command=lambda:add_to_calculation(6), width = 5, font=("Arial",14))
-btn_6.grid(row=3, column=3)
-btn_7 = tk.Button(root, text="7",command=lambda:add_to_calculation(7), width = 5, font=("Arial",14))
-btn_7.grid(row=4, column=1)
-btn_8 = tk.Button(root, text="8",command=lambda:add_to_calculation(8), width = 5, font=("Arial",14))
-btn_8.grid(row=4, column=2)
-btn_9 = tk.Button(root, text="9",command=lambda:add_to_calculation(9), width = 5, font=("Arial",14))
-btn_9.grid(row=4, column=3)
-btn_0 = tk.Button(root, text="0",command=lambda:add_to_calculation(0), width = 5, font=("Arial",14))
-btn_0.grid(row=5, column=2)
-btn_plus = tk.Button(root, text="+",command=lambda:add_to_calculation("+"), width = 5, font=("Arial",14))
-btn_plus.grid(row=2, column=4)
-btn_minus = tk.Button(root, text="-",command=lambda:add_to_calculation("-"), width = 5, font=("Arial",14))
-btn_minus.grid(row=3, column=4)
-btn_mul = tk.Button(root, text="*",command=lambda:add_to_calculation("*"), width = 5, font=("Arial",14))
-btn_mul.grid(row=4, column=4)
-btn_divide = tk.Button(root, text="/",command=lambda:add_to_calculation("/"), width = 5, font=("Arial",14))
-btn_divide.grid(row=5, column=4)
-btn_open = tk.Button(root, text="(",command=lambda:add_to_calculation("("), width = 5, font=("Arial",14))
-btn_open.grid(row=5, column=1)
-btn_close = tk.Button(root, text=")",command=lambda:add_to_calculation(")"), width = 5, font=("Arial",14))
-btn_close.grid(row=5, column=3)
-btn_plus = tk.Button(root, text="+",command=lambda:add_to_calculation("+"), width = 5, font=("Arial",14))
-btn_plus.grid(row=2, column=4)
-btn_equal = tk.Button(root, text="=",command=evaluate_calculation, width = 11, font=("Arial",14))
-btn_equal.grid(row=6, column=1, columnspan=2)
-btn_clear = tk.Button(root, text="c",command=clear_field, width = 11, font=("Arial",14))
-btn_clear.grid(row=6, column=3, columnspan=2)
+text_result = tk.Text(display_frame, height=2, width=24, font=("Helvetica", 30), 
+                     bg=DISPLAY_COLOR, fg=TEXT_COLOR, bd=0, wrap=tk.WORD)
+text_result.pack(padx=10, pady=10)
+text_result.insert(1.0, "0")
+
+# Button Frame
+button_frame = tk.Frame(root, bg=BG_COLOR)
+button_frame.pack(padx=10, pady=10, expand=True, fill=tk.BOTH)
+
+# Button styles
+button_style = {
+    "font": ("Helvetica", 18),
+    "bd": 0,
+    "fg": TEXT_COLOR,
+    "activeforeground": TEXT_COLOR
+}
+
+# Scientific buttons
+sci_buttons = [
+    ("sin", 1, 0, SCIENCE_COLOR), ("cos", 1, 1, SCIENCE_COLOR), 
+    ("tan", 1, 2, SCIENCE_COLOR), ("^", 1, 3, OPERATOR_COLOR),
+    ("π", 2, 0, SCIENCE_COLOR), ("e", 2, 1, SCIENCE_COLOR),
+    ("log", 2, 2, SCIENCE_COLOR), ("ln", 2, 3, SCIENCE_COLOR),
+    ("(", 3, 0, OPERATOR_COLOR), (")", 3, 1, OPERATOR_COLOR),
+    ("√", 3, 2, SCIENCE_COLOR), ("!", 3, 3, SCIENCE_COLOR)
+]
+
+for (text, row, col, color) in sci_buttons:
+    btn = tk.Button(button_frame, text=text, bg=color, 
+                   command=lambda t=text: add_to_calculation(t), **button_style)
+    btn.grid(row=row, column=col, sticky=tk.NSEW, padx=2, pady=2)
+
+# Number buttons
+num_buttons = [
+    ("7", 4, 0, BUTTON_COLOR), ("8", 4, 1, BUTTON_COLOR), 
+    ("9", 4, 2, BUTTON_COLOR), ("/", 4, 3, OPERATOR_COLOR),
+    ("4", 5, 0, BUTTON_COLOR), ("5", 5, 1, BUTTON_COLOR),
+    ("6", 5, 2, BUTTON_COLOR), ("*", 5, 3, OPERATOR_COLOR),
+    ("1", 6, 0, BUTTON_COLOR), ("2", 6, 1, BUTTON_COLOR),
+    ("3", 6, 2, BUTTON_COLOR), ("-", 6, 3, OPERATOR_COLOR),
+    ("0", 7, 0, BUTTON_COLOR), (".", 7, 1, BUTTON_COLOR),
+    ("=", 7, 2, OPERATOR_COLOR), ("+", 7, 3, OPERATOR_COLOR)
+]
+
+for (text, row, col, color) in num_buttons:
+    if text == "=":
+        btn = tk.Button(button_frame, text=text, bg=color, 
+                       command=evaluate_calculation, **button_style)
+    else:
+        btn = tk.Button(button_frame, text=text, bg=color, 
+                       command=lambda t=text: add_to_calculation(t), **button_style)
+    btn.grid(row=row, column=col, sticky=tk.NSEW, padx=2, pady=2)
+
+# Clear button
+clear_btn = tk.Button(button_frame, text="C", bg=SPECIAL_COLOR, 
+                     command=clear_field, **button_style)
+clear_btn.grid(row=0, column=3, sticky=tk.NSEW, padx=2, pady=2)
+
+# Configure grid weights
+for i in range(8):
+    button_frame.rowconfigure(i, weight=1)
+for i in range(4):
+    button_frame.columnconfigure(i, weight=1)
+
 root.mainloop()
